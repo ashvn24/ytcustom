@@ -211,6 +211,9 @@ const DEVOTIONAL_ROTATION_POOL = [
   'Hanuman chalisa powerful sacred sankatmochan chant',
   'Maha mrityunjaya mantra 108 times sacred chanting meditation',
   'Guruvayurappa Krishna songs Malayalam devotional',
+  'Harivarasanam Swamiye Saranam Ayyappa Yesudas',
+  'Chethi mandaram thulasi K S Chithra devotional Malayalam',
+  'Amme Narayana Devi Narayana Chottanikkara Malayalam',
   'South Indian temple nadaswaram thavil auspicious raga',
   'Ganesha pancharatnam stotra vinayaka',
   'Vishnu sahasranamam stotra MS Subbulakshmi',
@@ -218,6 +221,7 @@ const DEVOTIONAL_ROTATION_POOL = [
   'Achyutam keshavam radhe radhe krishna kirtan',
   'Lalitha sahasranamam devi stuti sacred',
   'Kani kaanum neram Guruvayur unnikrishnan devotional',
+  'Lord Shiva Malayalam devotional songs Vadakkumnathan',
   'Carnatic classical instrumental veena flute',
 ];
 
@@ -260,6 +264,33 @@ const CATEGORY_ROTATION_POOLS = {
     'Guruvayurappa krishna devotional songs Malayalam',
     'Kani kaanum neram Guruvayur unnikrishnan',
     'Sabarimala ayyappa devotional songs Malayalam',
+    'Harivarasanam Swamiye Saranam Ayyappa Yesudas',
+    'Chethi mandaram thulasi K S Chithra devotional Malayalam',
+    'Amme Narayana Devi Narayana Chottanikkara Malayalam',
+    'Attukal Amma devotional songs Malayalam Chithra',
+    'Lord Shiva Malayalam devotional songs Vadakkumnathan Mahadev',
+    'Pramadamani Sabarimala Ayyappa songs Malayalam',
+    'Mookambika Devi Sthothram songs Malayalam',
+    'Oru neramenkilum kanathe vayyente Guruvayurappa',
+    'Maha Ganapathi Malayalam devotional songs',
+    'Murugan devotional songs Malayalam Subramanya',
+    'K J Yesudas Hindu devotional songs Malayalam non stop',
+    'Chottanikkara Amme Devi Malayalam devotional hits',
+  ],
+  'Malayalam Videos': [
+    'traditional Kerala sadya cooking vegetarian dishes Malayalam recipe',
+    'authentic Kerala breakfast puttu appam kadala recipe Malayalam',
+    'Kerala village cooking traditional recipes Malayalam',
+    'Kerala health tips doctor advice Malayalam lifestyle',
+    'Kerala nature backwaters silent valley documentary Malayalam',
+    'Shaan Geo recipes authentic Malayalam cooking',
+  ],
+  'Malayalam Health & Food': [
+    'Malayalam health tips thyroid symptoms cure doctor',
+    'Kerala traditional healthy cooking recipes Malayalam',
+    'daily healthy living habits Malayalam doctor guide',
+    'Dr Danish Salim health tips Malayalam daily wellness',
+    'women health menopause awareness Malayalam doctor',
   ],
   'Hanuman Chalisa': [
     'Hanuman chalisa sacred recitation 108',
@@ -408,15 +439,25 @@ export const videoProvider = {
     // 7. General Sacred Hindu Devotional query
     const devQuery = DEVOTIONAL_ROTATION_POOL[Math.floor(Math.random() * DEVOTIONAL_ROTATION_POOL.length)];
 
+    // 8. Malayalam Devotional songs query (High priority)
+    const malDevPool = CATEGORY_ROTATION_POOLS['Malayalam Devotional'];
+    const malDevQuery = malDevPool[Math.floor(Math.random() * malDevPool.length)];
+
+    // 9. Malayalam Videos (Cooking / Health / Wholesome culture)
+    const malVidPool = CATEGORY_ROTATION_POOLS['Malayalam Videos'];
+    const malVidQuery = malVidPool[Math.floor(Math.random() * malVidPool.length)];
+
     try {
-      const [cookingRes, healthRes, shivaRes, thyroidRes, menopauseRes, habitsRes, devRes] = await Promise.all([
-        fetchYouTubeDataApi(cookingQuery, 4, 'Cooking & Recipes', false),
-        fetchYouTubeDataApi(healthQuery, 5, 'Health Benefits', false),
-        fetchYouTubeDataApi(shivaQuery, 5, 'Shiva Devotional', true),
+      const [cookingRes, healthRes, shivaRes, thyroidRes, menopauseRes, habitsRes, devRes, malDevRes, malVidRes] = await Promise.all([
+        fetchYouTubeDataApi(cookingQuery, 3, 'Cooking & Recipes', false),
+        fetchYouTubeDataApi(healthQuery, 4, 'Health Benefits', false),
+        fetchYouTubeDataApi(shivaQuery, 4, 'Shiva Devotional', true),
         fetchYouTubeDataApi(thyroidQuery, 3, 'Thyroid Care & Cure', false),
         fetchYouTubeDataApi(menopauseQuery, 3, 'Menopause Guide', false),
         fetchYouTubeDataApi(habitsQuery, 3, 'Good Living Habits', false),
         fetchYouTubeDataApi(devQuery, 3, 'Hindu Devotional', true),
+        fetchYouTubeDataApi(malDevQuery, 4, 'Malayalam Devotional', true),
+        fetchYouTubeDataApi(malVidQuery, 3, 'Malayalam Videos', false),
       ]);
 
       if (cookingRes?.length) liveItems.push(...cookingRes);
@@ -426,6 +467,8 @@ export const videoProvider = {
       if (menopauseRes?.length) liveItems.push(...menopauseRes);
       if (habitsRes?.length) liveItems.push(...habitsRes);
       if (devRes?.length) liveItems.push(...devRes);
+      if (malDevRes?.length) liveItems.push(...malDevRes);
+      if (malVidRes?.length) liveItems.push(...malVidRes);
     } catch (e) {
       console.warn('Error fetching live home sections:', e);
     }
@@ -440,6 +483,8 @@ export const videoProvider = {
         { q: menopauseQuery, cat: 'Menopause Guide', dev: false },
         { q: habitsQuery, cat: 'Good Living Habits', dev: false },
         { q: devQuery, cat: 'Hindu Devotional', dev: true },
+        { q: malDevQuery, cat: 'Malayalam Devotional', dev: true },
+        { q: malVidQuery, cat: 'Malayalam Videos', dev: false },
       ];
 
       for (const t of fallbackTopics) {
