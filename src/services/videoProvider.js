@@ -234,18 +234,21 @@ const CATEGORY_ROTATION_POOLS = {
     'Hare krishna kirtan meditation flute',
   ],
   'Shiva Devotional': [
-    'Shiva tandava stotram sacred chants Har Har Shambhu',
+    'Shiva tandava stotram sacred chants',
     'Maha mrityunjaya mantra 108 times sacred chanting meditation T-Series',
     'Shiv kailasho ke vasi Anuradha Paudwal shiv bhajan',
     'Om namah shivaya peaceful meditation chants Lord Shiva',
     'Shiva stuti stotram bilwashtakam lingashtakam sacred chants',
-    'Namo namo shankara Kedarnath Shiva devotional song Amit Trivedi',
-    'Shiva tandava stotram Agam Aggarwal divine Mahadev chant',
     'Shiv aarti karpura gauram karunavataram divine bhajan',
-    'Bolo har har har Shiva devotional track powerful',
     'Shiv amritwani Anuradha Paudwal complete sacred bhajan',
     'Shiv tandav stotram with lyrics Sanskrit Mahadev stuti',
     'Rameshwaram Kashi Kedarnath sacred Shiva temple chants',
+    'Vadakkumnathan Malayalam Shiva devotional songs',
+    'Vaikkathappan Shiva devotional songs Malayalam',
+    'Shiva Panchakshara Stotram Malayalam traditional',
+    'Shiv Chalisa traditional bhajan Gulshan Kumar',
+    'Shiva Mahimna Stotram traditional Sanskrit chant',
+    'Lord Shiva Malayalam traditional temple songs chenda melam',
   ],
   'Ayyappa Devotional': [
     'Swamiye saranam ayyappa harivarasanam songs',
@@ -412,63 +415,21 @@ export const videoProvider = {
 
     let liveItems = [];
 
-    // 1. Cooking & Recipes query
-    const cookingPool = CATEGORY_ROTATION_POOLS['Cooking & Recipes'];
-    const cookingQuery = cookingPool[Math.floor(Math.random() * cookingPool.length)];
-
-    // 2. Health Benefits & Nutrition query (High priority)
-    const healthPool = CATEGORY_ROTATION_POOLS['Health Benefits'];
-    const healthQuery = healthPool[Math.floor(Math.random() * healthPool.length)];
-
-    // 3. Lord Shiva Devotional query (High priority)
     const shivaPool = CATEGORY_ROTATION_POOLS['Shiva Devotional'];
-    const shivaQuery = shivaPool[Math.floor(Math.random() * shivaPool.length)];
-
-    // 4. Thyroid Care & Cure query
-    const thyroidPool = CATEGORY_ROTATION_POOLS['Thyroid Care & Cure'];
-    const thyroidQuery = thyroidPool[Math.floor(Math.random() * thyroidPool.length)];
-
-    // 5. Menopause Guide query
-    const menopausePool = CATEGORY_ROTATION_POOLS['Menopause Guide'];
-    const menopauseQuery = menopausePool[Math.floor(Math.random() * menopausePool.length)];
-
-    // 6. Good Living Habits query
-    const habitsPool = CATEGORY_ROTATION_POOLS['Good Living Habits'];
-    const habitsQuery = habitsPool[Math.floor(Math.random() * habitsPool.length)];
-
-    // 7. General Sacred Hindu Devotional query
-    const devQuery = DEVOTIONAL_ROTATION_POOL[Math.floor(Math.random() * DEVOTIONAL_ROTATION_POOL.length)];
-
-    // 8. Malayalam Devotional songs query (High priority)
-    const malDevPool = CATEGORY_ROTATION_POOLS['Malayalam Devotional'];
-    const malDevQuery = malDevPool[Math.floor(Math.random() * malDevPool.length)];
-
-    // 9. Malayalam Videos (Cooking / Health / Wholesome culture)
-    const malVidPool = CATEGORY_ROTATION_POOLS['Malayalam Videos'];
-    const malVidQuery = malVidPool[Math.floor(Math.random() * malVidPool.length)];
+    const shivaQuery1 = shivaPool[Math.floor(Math.random() * shivaPool.length)];
+    const shivaQuery2 = shivaPool[Math.floor(Math.random() * shivaPool.length)];
+    const shivaQuery3 = shivaPool[Math.floor(Math.random() * shivaPool.length)];
 
     try {
-      const [cookingRes, healthRes, shivaRes, thyroidRes, menopauseRes, habitsRes, devRes, malDevRes, malVidRes] = await Promise.all([
-        fetchYouTubeDataApi(cookingQuery, 3, 'Cooking & Recipes', false),
-        fetchYouTubeDataApi(healthQuery, 4, 'Health Benefits', false),
-        fetchYouTubeDataApi(shivaQuery, 4, 'Shiva Devotional', true),
-        fetchYouTubeDataApi(thyroidQuery, 3, 'Thyroid Care & Cure', false),
-        fetchYouTubeDataApi(menopauseQuery, 3, 'Menopause Guide', false),
-        fetchYouTubeDataApi(habitsQuery, 3, 'Good Living Habits', false),
-        fetchYouTubeDataApi(devQuery, 3, 'Hindu Devotional', true),
-        fetchYouTubeDataApi(malDevQuery, 4, 'Malayalam Devotional', true),
-        fetchYouTubeDataApi(malVidQuery, 3, 'Malayalam Videos', false),
+      const [shivaRes1, shivaRes2, shivaRes3] = await Promise.all([
+        fetchYouTubeDataApi(shivaQuery1, 10, 'Shiva Devotional', true),
+        fetchYouTubeDataApi(shivaQuery2, 10, 'Shiva Devotional', true),
+        fetchYouTubeDataApi(shivaQuery3, 10, 'Shiva Devotional', true),
       ]);
 
-      if (cookingRes?.length) liveItems.push(...cookingRes);
-      if (healthRes?.length) liveItems.push(...healthRes);
-      if (shivaRes?.length) liveItems.push(...shivaRes);
-      if (thyroidRes?.length) liveItems.push(...thyroidRes);
-      if (menopauseRes?.length) liveItems.push(...menopauseRes);
-      if (habitsRes?.length) liveItems.push(...habitsRes);
-      if (devRes?.length) liveItems.push(...devRes);
-      if (malDevRes?.length) liveItems.push(...malDevRes);
-      if (malVidRes?.length) liveItems.push(...malVidRes);
+      if (shivaRes1?.length) liveItems.push(...shivaRes1);
+      if (shivaRes2?.length) liveItems.push(...shivaRes2);
+      if (shivaRes3?.length) liveItems.push(...shivaRes3);
     } catch (e) {
       console.warn('Error fetching live home sections:', e);
     }
@@ -476,21 +437,15 @@ export const videoProvider = {
     // Secondary fallback to public mirror if API quota exceeded or empty
     if (liveItems.length === 0) {
       const fallbackTopics = [
-        { q: cookingQuery, cat: 'Cooking & Recipes', dev: false },
-        { q: healthQuery, cat: 'Health Benefits', dev: false },
-        { q: shivaQuery, cat: 'Shiva Devotional', dev: true },
-        { q: thyroidQuery, cat: 'Thyroid Care & Cure', dev: false },
-        { q: menopauseQuery, cat: 'Menopause Guide', dev: false },
-        { q: habitsQuery, cat: 'Good Living Habits', dev: false },
-        { q: devQuery, cat: 'Hindu Devotional', dev: true },
-        { q: malDevQuery, cat: 'Malayalam Devotional', dev: true },
-        { q: malVidQuery, cat: 'Malayalam Videos', dev: false },
+        { q: shivaQuery1, cat: 'Shiva Devotional', dev: true },
+        { q: shivaQuery2, cat: 'Shiva Devotional', dev: true },
+        { q: shivaQuery3, cat: 'Shiva Devotional', dev: true },
       ];
 
       for (const t of fallbackTopics) {
         const res = await fetchFromInvidious(t.q, t.cat, t.dev);
         if (res && res.length > 0) {
-          liveItems.push(...res.slice(0, 3));
+          liveItems.push(...res.slice(0, 10));
         }
       }
     }
@@ -789,7 +744,10 @@ export const videoProvider = {
   getHomeVideos(filterConfig, preferences) {
     for (const list of liveCache.values()) {
       if (list && list.length > 0) {
-        return filterAndAuditLiveVideos(list, filterConfig);
+        const shivaVideos = list.filter(v => v.category === 'Shiva Devotional');
+        if (shivaVideos.length > 0) {
+          return filterAndAuditLiveVideos(shivaVideos, filterConfig);
+        }
       }
     }
 
@@ -924,7 +882,7 @@ export const videoProvider = {
       },
     ];
 
-    return filterAndAuditLiveVideos(curatedFallback, filterConfig);
+    return filterAndAuditLiveVideos(curatedFallback.filter(v => v.category === 'Shiva Devotional'), filterConfig);
   },
 
   getDevotionalVideos(filterConfig, subCategory = 'All') {

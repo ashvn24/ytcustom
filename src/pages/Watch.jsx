@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import {
   ThumbsUp,
   Share2,
@@ -23,6 +23,7 @@ import { usePreferences } from '../hooks/usePreferences';
 
 export default function Watch() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { filterRules } = useApp();
   const {
     isLiked,
@@ -43,6 +44,14 @@ export default function Watch() {
   const [relatedVideos, setRelatedVideos] = useState([]);
   const [embedError, setEmbedError] = useState(null);
   const [useMirrorPlayer, setUseMirrorPlayer] = useState(false);
+  const iframeRef = useRef(null);
+
+  // Handle iframe load to start listening for API events
+  const handleIframeLoad = () => {
+    if (iframeRef.current && iframeRef.current.contentWindow) {
+      iframeRef.current.contentWindow.postMessage(JSON.stringify({ event: 'listening' }), '*');
+    }
+  };
 
   // Fetch video asynchronously
   useEffect(() => {
@@ -146,12 +155,20 @@ export default function Watch() {
             });
           }
         }
+        if (data && data.event === 'infoDelivery' && data.info) {
+          if (data.info.playerState === 0) { // 0 is ENDED
+            if (relatedVideos.length > 0) {
+              const nextId = relatedVideos[0].youtubeId;
+              navigate(`/watch/${nextId}`);
+            }
+          }
+        }
       } catch (e) {}
     };
 
     window.addEventListener('message', handleMessage);
     return () => window.removeEventListener('message', handleMessage);
-  }, [currentVideo?.youtubeId]);
+  }, [currentVideo?.youtubeId, relatedVideos, navigate]);
 
   // Handle Share link copy
   const handleShare = () => {
@@ -278,6 +295,8 @@ export default function Watch() {
           ) : (
             <>
               <iframe
+                ref={iframeRef}
+                onLoad={handleIframeLoad}
                 src={`https://www.youtube.com/embed/${currentVideo.youtubeId}?autoplay=1&rel=0&modestbranding=1&enablejsapi=1&origin=${encodeURIComponent(
                   window.location.origin
                 )}`}
